@@ -3,6 +3,8 @@
 const express = require('express');
 const authRoutes = require('./modules/auth/auth.routes');
 const dashboardRoutes = require('./modules/dashboard/dashboard.routes');
+const vehicleRoutes = require('./modules/vehicles/vehicle.routes');
+const driverRoutes = require('./modules/drivers/driver.routes');
 
 const router = express.Router();
 
@@ -10,8 +12,8 @@ router.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 router.use('/auth', authRoutes);
 router.use('/dashboard', dashboardRoutes);
-// router.use('/vehicles', vehicleRoutes);   // added in the vehicles phase
-// router.use('/drivers', driverRoutes);      // added in the drivers phase
+router.use('/vehicles', vehicleRoutes);
+router.use('/drivers', driverRoutes);
 // ... trips, maintenance, fuel, expenses, reports
 
 module.exports = router;
