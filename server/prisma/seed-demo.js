@@ -61,6 +61,56 @@ async function main() {
     console.log(`Trips already present (${tripCount}); skipped trip seeding.`);
   }
 
+  // Fuel logs + expenses (idempotent: only when empty), for cost analytics.
+  const analyst = await prisma.user.findUnique({ where: { email: 'finance@transitops.local' } });
+  const loggedById = analyst ? analyst.id : null;
+
+  if ((await prisma.fuelLog.count()) === 0) {
+    const fuel = [
+      { model: 'TRUCK-11', liters: 60, cost: 5400, date: '2026-06-20', odometerReading: 182000 },
+      { model: 'VAN-05', liters: 24, cost: 2100, date: '2026-06-25', odometerReading: 74000 },
+      { model: 'MINI-08', liters: 30, cost: 2700, date: '2026-07-01', odometerReading: 33000 },
+      { model: 'TRUCK-04', liters: 80, cost: 7200, date: '2026-07-03', odometerReading: 98025 },
+      { model: 'MINI-03', liters: 20, cost: 1800, date: '2026-06-28', odometerReading: 66000 },
+    ];
+    for (const f of fuel) {
+      await prisma.fuelLog.create({
+        data: {
+          vehicleId: vehByModel[f.model],
+          liters: f.liters,
+          cost: f.cost,
+          date: new Date(f.date),
+          odometerReading: f.odometerReading,
+          createdById: loggedById,
+        },
+      });
+    }
+    console.log(`Seeded ${fuel.length} fuel logs.`);
+  }
+
+  if ((await prisma.expense.count()) === 0) {
+    const expenses = [
+      { model: 'TRUCK-11', category: 'INSURANCE', amount: 8000, date: '2026-06-01', notes: 'Annual premium' },
+      { model: 'TRUCK-11', category: 'TOLL', amount: 450, date: '2026-06-21' },
+      { model: 'TRUCK-04', category: 'TOLL', amount: 600, date: '2026-07-03' },
+      { model: 'MINI-08', category: 'PARKING', amount: 120, date: '2026-07-02' },
+      { model: 'VAN-05', category: 'FINE', amount: 1000, date: '2026-06-26', notes: 'Overspeeding' },
+    ];
+    for (const e of expenses) {
+      await prisma.expense.create({
+        data: {
+          vehicleId: vehByModel[e.model],
+          category: e.category,
+          amount: e.amount,
+          date: new Date(e.date),
+          notes: e.notes || null,
+          createdById: loggedById,
+        },
+      });
+    }
+    console.log(`Seeded ${expenses.length} expenses.`);
+  }
+
   console.log(`Seeded ${VEHICLES.length} vehicles and ${DRIVERS.length} drivers.`);
 }
 
