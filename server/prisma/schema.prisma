@@ -37,6 +37,7 @@ enum RoleName {
 enum VehicleType {
   TRUCK
   VAN
+  MINI
   CAR
   BUS
   TRAILER
