@@ -1,37 +1,50 @@
 @import "tailwindcss";
 
+/*
+  Design tokens — "Fleet Operations Console".
+  Typography does the identity work: Barlow (transit-signage lineage) for UI,
+  Barlow Semi Condensed for the display voice, IBM Plex Mono as the instrument
+  face for figures/plates/identifiers. Geometry is tightened (engineered, not
+  soft-and-floaty) and surfaces read as graphite console panels.
+*/
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-barlow-cond), var(--font-barlow), sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  /* Tighter, engineered corners — no soft bubble cards. */
+  --radius-sm: 0.1875rem;
+  --radius-md: 0.3125rem;
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.75rem;
+  --radius-3xl: 1rem;
 }
 
 /*
-  Theming strategy — one palette, two themes.
-  The whole UI is built on Tailwind's `slate` scale. Rather than annotate every
-  component with `dark:` variants, we redefine the `--color-slate-*` tokens that
-  those utilities resolve through. Light mode (the default) INVERTS the ramp so
-  high numbers become light surfaces and low numbers become dark ink; `.dark`
-  restores the normal ramp. slate-950 stays dark in both — it is only ever used
-  as ink on a bright accent. Accent text levels (amber/emerald/sky/rose 300-400)
-  are darkened in light mode so colored text stays legible on light surfaces.
+  One palette, two themes. The UI is built on Tailwind's `slate` scale; we
+  redefine the `--color-slate-*` tokens rather than annotate every component
+  with `dark:`. Light mode (default) INVERTS the ramp; `.dark` restores it.
+  Light surfaces are pure white on a cool grey field so panels read crisply
+  instead of washing together. slate-950 stays dark in both (ink on accent).
 */
 :root {
   color-scheme: light;
 
-  --color-slate-50: #020617;
-  --color-slate-100: #0f172a;
-  --color-slate-200: #1e293b;
-  --color-slate-300: #334155;
-  --color-slate-400: #475569;
-  --color-slate-500: #64748b;
-  --color-slate-600: #94a3b8;
-  --color-slate-700: #cbd5e1;
-  --color-slate-800: #e2e8f0;
-  --color-slate-900: #f1f5f9;
-  --color-slate-950: #020617;
+  --color-slate-50: #0b0f16;
+  --color-slate-100: #141b25;
+  --color-slate-200: #27313f;
+  --color-slate-300: #3f4c5c;
+  --color-slate-400: #58677a;
+  --color-slate-500: #6b7a8b;
+  --color-slate-600: #8a99aa;
+  --color-slate-700: #c4cedb;
+  --color-slate-800: #d8e0ea;
+  --color-slate-900: #ffffff;
+  --color-slate-950: #05070b;
 
-  --color-amber-300: #b45309;
-  --color-amber-400: #d97706;
+  --color-amber-300: #a15c07;
+  --color-amber-400: #bf7808;
   --color-emerald-300: #047857;
   --color-emerald-400: #059669;
   --color-sky-300: #0369a1;
@@ -39,28 +52,28 @@
   --color-rose-300: #be123c;
   --color-rose-400: #e11d48;
 
-  --page-bg: #f6f8fb;
-  --page-fg: #1e293b;
-  --scroll-thumb: #cbd5e1;
+  --page-bg: #e9edf3;
+  --page-fg: #1a2330;
+  --scroll-thumb: #c2ccd9;
 }
 
 :root.dark {
   color-scheme: dark;
 
-  --color-slate-50: #f8fafc;
-  --color-slate-100: #f1f5f9;
-  --color-slate-200: #e2e8f0;
-  --color-slate-300: #cbd5e1;
-  --color-slate-400: #94a3b8;
+  --color-slate-50: #f6f9fc;
+  --color-slate-100: #eef2f7;
+  --color-slate-200: #dbe2ea;
+  --color-slate-300: #c0cad6;
+  --color-slate-400: #8b98a9;
   --color-slate-500: #64748b;
-  --color-slate-600: #475569;
-  --color-slate-700: #334155;
-  --color-slate-800: #1e293b;
-  --color-slate-900: #0f172a;
-  --color-slate-950: #020617;
+  --color-slate-600: #465565;
+  --color-slate-700: #2d3846;
+  --color-slate-800: #1e2733;
+  --color-slate-900: #10151d;
+  --color-slate-950: #05070b;
 
   --color-amber-300: #fcd34d;
-  --color-amber-400: #fbbf24;
+  --color-amber-400: #f7b733;
   --color-emerald-300: #6ee7b7;
   --color-emerald-400: #34d399;
   --color-sky-300: #7dd3fc;
@@ -69,33 +82,70 @@
   --color-rose-400: #fb7185;
 
   --page-bg: #0a0e14;
-  --page-fg: #e2e8f0;
-  --scroll-thumb: #1e293b;
+  --page-fg: #e6ecf3;
+  --scroll-thumb: #223041;
 }
 
-body {
-  background-color: var(--page-bg);
-  color: var(--page-fg);
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-}
+@layer base {
+  body {
+    background-color: var(--page-bg);
+    color: var(--page-fg);
+    -webkit-font-smoothing: antialiased;
+  }
 
-@media (prefers-reduced-motion: no-preference) {
-  * {
-    transition:
-      background-color 0.2s ease,
-      border-color 0.2s ease,
-      color 0.2s ease;
+  /* Headings speak in the condensed display voice (wayfinding signage). */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: 0.006em;
+  }
+
+  /* Accessibility floor — a clear, consistent focus ring everywhere. */
+  :focus-visible {
+    outline: 2px solid var(--color-amber-400);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-amber-400) 30%, transparent);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scroll-thumb);
+    border-radius: 6px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    * {
+      transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease;
+    }
   }
 }
 
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+/* Instrument / signage helpers. */
+@utility eyebrow {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.6875rem;
+  line-height: 1.1;
 }
-::-webkit-scrollbar-thumb {
-  background: var(--scroll-thumb);
-  border-radius: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
+
+@utility font-display {
+  font-family: var(--font-display);
 }
