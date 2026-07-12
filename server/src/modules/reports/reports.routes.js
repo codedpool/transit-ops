@@ -10,5 +10,6 @@ router.use(authenticate);
 
 router.get('/overview', authorize(MODULES.REPORTS, ACTIONS.READ), controller.overview);
 router.get('/export.csv', authorize(MODULES.REPORTS, ACTIONS.READ), controller.exportCsv);
+router.get('/export.pdf', authorize(MODULES.REPORTS, ACTIONS.READ), controller.exportPdf);
 
 module.exports = router;
