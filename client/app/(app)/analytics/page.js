@@ -3,6 +3,7 @@ import KpiCard from "@/components/KpiCard";
 import BarChart from "@/components/analytics/BarChart";
 import RankBars from "@/components/analytics/RankBars";
 import ExportCsvButton from "@/components/analytics/ExportCsvButton";
+import ExportPdfButton from "@/components/analytics/ExportPdfButton";
 
 export default async function AnalyticsPage() {
   const data = await getAnalytics();
@@ -32,7 +33,10 @@ export default async function AnalyticsPage() {
             ROI = (Revenue − (Maintenance + Fuel)) / Acquisition Cost
           </p>
         </div>
-        <ExportCsvButton />
+        <div className="flex gap-2">
+          <ExportCsvButton />
+          <ExportPdfButton />
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">

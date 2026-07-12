@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getVehicle, getSession } from "@/lib/api";
+import { getVehicle, getSession, getVehicleDocuments } from "@/lib/api";
 import { can } from "@/lib/permissions";
 import { titleize, formatNumber, formatCurrency, formatDate } from "@/lib/format";
 import StatusBadge from "@/components/StatusBadge";
 import ConfirmDeleteButton from "@/components/ConfirmDeleteButton";
+import VehicleDocuments from "@/components/VehicleDocuments";
 
 export const metadata = { title: "Vehicle — TransitOps" };
 
@@ -19,7 +20,11 @@ function Row({ label, children }) {
 
 export default async function VehicleDetailPage({ params }) {
   const { id } = await params;
-  const [session, vehicle] = await Promise.all([getSession(), getVehicle(id)]);
+  const [session, vehicle, documents] = await Promise.all([
+    getSession(),
+    getVehicle(id),
+    getVehicleDocuments(id),
+  ]);
   if (!vehicle) notFound();
 
   const perms = session?.permissions;
@@ -63,6 +68,8 @@ export default async function VehicleDetailPage({ params }) {
         <Row label="Region">{vehicle.region || "—"}</Row>
         <Row label="Added">{formatDate(vehicle.createdAt)}</Row>
       </div>
+
+      <VehicleDocuments vehicleId={vehicle.id} documents={documents} canManage={canEdit} />
     </div>
   );
 }

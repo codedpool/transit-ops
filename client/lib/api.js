@@ -155,3 +155,18 @@ export async function getAnalytics() {
     return null;
   }
 }
+
+// Vehicle documents
+export async function getVehicleDocuments(vehicleId) {
+  try {
+    const res = await fetch(`${API_BASE}/documents?vehicleId=${vehicleId}`, {
+      headers: { cookie: await cookieHeader() },
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.data || [];
+  } catch {
+    return [];
+  }
+}
