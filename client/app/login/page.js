@@ -101,8 +101,9 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold text-slate-100">
-              Sign in to your account
+            <p className="eyebrow mb-1.5 text-amber-400">Operations Access</p>
+            <h2 className="text-[26px] font-semibold leading-tight tracking-tight text-slate-100">
+              Sign in to the console
             </h2>
             <p className="mt-1 text-sm text-slate-500">
               Enter your credentials to continue.
@@ -116,7 +117,7 @@ export default function LoginPage() {
           )}
 
           <div className="space-y-1">
-            <label className="text-[11px] uppercase tracking-wider text-slate-500">
+            <label className="eyebrow text-slate-500">
               Email
             </label>
             <input
@@ -125,12 +126,12 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="fleet@transitops.local"
-              className="w-full rounded-lg border border-slate-800 bg-slate-900/60 px-4 py-2.5 text-sm text-slate-200 placeholder:text-slate-500 focus:border-amber-500/50 focus:outline-none"
+              className="w-full rounded-md border border-slate-800 bg-slate-900/60 px-4 py-2.5 text-sm text-slate-200 placeholder:text-slate-500 focus:border-amber-400/60 focus:outline-none"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-[11px] uppercase tracking-wider text-slate-500">
+            <label className="eyebrow text-slate-500">
               Password
             </label>
             <input
@@ -139,21 +140,21 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full rounded-lg border border-slate-800 bg-slate-900/60 px-4 py-2.5 text-sm text-slate-200 placeholder:text-slate-500 focus:border-amber-500/50 focus:outline-none"
+              className="w-full rounded-md border border-slate-800 bg-slate-900/60 px-4 py-2.5 text-sm text-slate-200 placeholder:text-slate-500 focus:border-amber-400/60 focus:outline-none"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-amber-400 disabled:opacity-60"
+            className="w-full rounded-md bg-amber-500 px-4 py-2.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-amber-400 disabled:opacity-60"
           >
-            {loading ? "Signing in…" : "Sign In"}
+            {loading ? "Signing in…" : "Sign in"}
           </button>
 
-          <p className="rounded-lg border border-slate-800 bg-slate-900/40 px-3 py-2 text-xs text-slate-500">
-            Demo: <span className="text-slate-300">fleet@transitops.local</span> ·
-            password <span className="text-slate-300">Passw0rd!</span>
+          <p className="rounded-md border border-slate-800 bg-slate-900/40 px-3 py-2 font-mono text-xs text-slate-500">
+            <span className="text-slate-400">demo</span> fleet@transitops.local ·{" "}
+            <span className="text-slate-400">pw</span> Passw0rd!
           </p>
         </form>
       </div>
