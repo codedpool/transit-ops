@@ -1,12 +1,11 @@
 // Dashboard routes: /api/dashboard/*
 const express = require('express');
+const authenticate = require('../../middleware/authenticate');
 const controller = require('./dashboard.controller');
 
 const router = express.Router();
 
-// Read-only aggregates. Public for now so the Next.js server can render the
-// dashboard before the client login UI exists.
-// TODO: guard with `authenticate` + `authorize` once the client auth flow lands.
-router.get('/summary', controller.summary);
+// Read-only aggregates. Any authenticated user may view the dashboard.
+router.get('/summary', authenticate, controller.summary);
 
 module.exports = router;
