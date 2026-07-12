@@ -30,6 +30,28 @@ module.exports = function errorHandler(err, req, res, next) {
     if (err.code === 'P2025') {
       return res.status(404).json({ error: { message: 'Record not found.', code: 'NOT_FOUND' } });
     }
+    if (err.code === 'P2003') {
+      return res.status(409).json({
+        error: {
+          message: 'Cannot delete: this record is still referenced by other records.',
+          code: 'IN_USE',
+        },
+      });
+    }
+  }
+
+  // onDelete: Restrict raises Postgres 23001 (restrict_violation), which Prisma
+  // surfaces as an "unknown" error rather than P2003 — treat it as in-use too.
+  if (
+    err instanceof Prisma.PrismaClientUnknownRequestError &&
+    /violates RESTRICT|foreign key constraint/i.test(err.message)
+  ) {
+    return res.status(409).json({
+      error: {
+        message: 'Cannot delete: this record is still referenced by other records.',
+        code: 'IN_USE',
+      },
+    });
   }
 
   if (err instanceof AppError) {
