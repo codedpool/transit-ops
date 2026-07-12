@@ -2,9 +2,10 @@
 # Only the client/ (Next.js) and server/ (Express) application folders belong in this repo.
 # Planning docs and the brief PDF stay local and must never be committed.
 
-# --- Root: ignore everything except the two app packages and this file ---
+# --- Root: ignore everything except the two app packages, this file and the README ---
 /*
 !/.gitignore
+!/README.md
 !/client/
 !/server/
 
