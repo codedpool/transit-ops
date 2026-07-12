@@ -3,7 +3,7 @@
 // Page navigation driven through the URL ?page= param.
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
-export default function Pagination({ pagination }) {
+export default function Pagination({ pagination, param = "page" }) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -13,8 +13,8 @@ export default function Pagination({ pagination }) {
 
   function goto(p) {
     const sp = new URLSearchParams(params.toString());
-    sp.set("page", String(p));
-    router.push(`${pathname}?${sp.toString()}`);
+    sp.set(param, String(p));
+    router.push(`${pathname}?${sp.toString()}#${param}`);
   }
 
   const from = total === 0 ? 0 : (page - 1) * pageSize + 1;

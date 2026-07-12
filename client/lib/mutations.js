@@ -43,3 +43,11 @@ export const deleteVehicle = (id) => apiWrite(`/vehicles/${id}`, "DELETE");
 export const createDriver = (body) => apiWrite("/drivers", "POST", body);
 export const updateDriver = (id, body) => apiWrite(`/drivers/${id}`, "PUT", body);
 export const deleteDriver = (id) => apiWrite(`/drivers/${id}`, "DELETE");
+
+// Fuel logs
+export const createFuelLog = (body) => apiWrite("/fuel", "POST", body);
+export const deleteFuelLog = (id) => apiWrite(`/fuel/${id}`, "DELETE");
+
+// Expenses
+export const createExpense = (body) => apiWrite("/expenses", "POST", body);
+export const deleteExpense = (id) => apiWrite(`/expenses/${id}`, "DELETE");

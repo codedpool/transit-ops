@@ -4,9 +4,14 @@
 // it can be rendered from Server Components; it resolves the right mutation itself.
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { deleteVehicle, deleteDriver } from "@/lib/mutations";
+import { deleteVehicle, deleteDriver, deleteFuelLog, deleteExpense } from "@/lib/mutations";
 
-const DELETERS = { vehicle: deleteVehicle, driver: deleteDriver };
+const DELETERS = {
+  vehicle: deleteVehicle,
+  driver: deleteDriver,
+  fuel: deleteFuelLog,
+  expense: deleteExpense,
+};
 
 export default function ConfirmDeleteButton({ entity, id, label = "Delete", redirectTo, small }) {
   const router = useRouter();

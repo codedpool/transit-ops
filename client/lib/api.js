@@ -70,6 +70,21 @@ export function getDriver(id) {
   return apiGet(`/drivers/${id}`);
 }
 
+// Fuel & expenses
+export function getFuelLogs(query) {
+  return apiGet(`/fuel${qs(query)}`);
+}
+export function getExpenses(query) {
+  return apiGet(`/expenses${qs(query)}`);
+}
+export function getFuelExpenseOptions() {
+  return apiGet(`/fuel/options`);
+}
+export async function getCostSummary() {
+  const res = await apiGet(`/expenses/cost-summary`);
+  return res?.data || [];
+}
+
 // Trips
 export async function getTrips(status) {
   const query = status && status !== "all" ? `?status=${status}` : "";
