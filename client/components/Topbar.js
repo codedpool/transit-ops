@@ -1,7 +1,25 @@
-// User/role are placeholders until auth lands; wire to the logged-in user then.
-export default function Topbar({
-  user = { name: "Raven K.", role: "Driver", initials: "RK" },
-}) {
+import LogoutButton from "@/components/LogoutButton";
+
+const ROLE_LABELS = {
+  FLEET_MANAGER: "Fleet Manager",
+  DRIVER: "Driver",
+  SAFETY_OFFICER: "Safety Officer",
+  FINANCIAL_ANALYST: "Financial Analyst",
+};
+
+function initials(name = "") {
+  return name
+    .split(" ")
+    .map((p) => p[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
+
+export default function Topbar({ user }) {
+  const roleLabel = ROLE_LABELS[user?.role] || user?.role || "";
+
   return (
     <header className="flex h-16 items-center gap-4 border-b border-slate-800 px-6">
       <div className="max-w-md flex-1">
@@ -13,13 +31,14 @@ export default function Topbar({
       </div>
 
       <div className="ml-auto flex items-center gap-3">
-        <span className="text-sm text-slate-300">{user.name}</span>
+        <span className="text-sm text-slate-300">{user?.name}</span>
         <span className="rounded-full border border-sky-500/30 bg-sky-500/10 px-2.5 py-1 text-xs text-sky-400">
-          {user.role}
+          {roleLabel}
         </span>
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-700 text-xs font-semibold text-slate-100">
-          {user.initials}
+          {initials(user?.name)}
         </span>
+        <LogoutButton />
       </div>
     </header>
   );

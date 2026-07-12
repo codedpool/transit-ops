@@ -3,19 +3,29 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+// Each item maps to a permission module; the item is shown only if the user's
+// role has at least read access. Enforcement is server-side — this is UX only.
 const NAV = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Fleet", href: "/fleet" },
-  { label: "Drivers", href: "/drivers" },
-  { label: "Trips", href: "/trips" },
-  { label: "Maintenance", href: "/maintenance" },
-  { label: "Fuel & Expenses", href: "/fuel-expenses" },
-  { label: "Analytics", href: "/analytics" },
-  { label: "Settings", href: "/settings" },
+  { label: "Dashboard", href: "/dashboard", modules: ["dashboard"] },
+  { label: "Fleet", href: "/fleet", modules: ["vehicles"] },
+  { label: "Drivers", href: "/drivers", modules: ["drivers"] },
+  { label: "Trips", href: "/trips", modules: ["trips"] },
+  { label: "Maintenance", href: "/maintenance", modules: ["maintenance"] },
+  { label: "Fuel & Expenses", href: "/fuel-expenses", modules: ["fuel", "expenses"] },
+  { label: "Analytics", href: "/analytics", modules: ["reports"] },
+  { label: "Settings", href: "/settings", modules: ["users"] },
 ];
 
-export default function Sidebar() {
+function canAccess(item, permissions) {
+  if (!permissions) return false;
+  return item.modules.some(
+    (m) => Array.isArray(permissions[m]) && permissions[m].length > 0
+  );
+}
+
+export default function Sidebar({ permissions }) {
   const pathname = usePathname();
+  const items = NAV.filter((item) => canAccess(item, permissions));
 
   return (
     <aside className="hidden w-60 shrink-0 flex-col border-r border-slate-800 bg-slate-950/60 md:flex">
@@ -29,7 +39,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 space-y-1 p-3">
-        {NAV.map((item) => {
+        {items.map((item) => {
           const active =
             pathname === item.href || pathname.startsWith(item.href + "/");
           return (
