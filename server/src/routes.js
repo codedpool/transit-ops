@@ -9,6 +9,7 @@ const maintenanceRoutes = require('./modules/maintenance/maintenance.routes');
 const fuelRoutes = require('./modules/fuel/fuel.routes');
 const expenseRoutes = require('./modules/expenses/expense.routes');
 const reportRoutes = require('./modules/reports/reports.routes');
+const documentRoutes = require('./modules/documents/document.routes');
 
 const router = express.Router();
 
@@ -23,5 +24,6 @@ router.use('/maintenance', maintenanceRoutes);
 router.use('/fuel', fuelRoutes);
 router.use('/expenses', expenseRoutes);
 router.use('/reports', reportRoutes);
+router.use('/documents', documentRoutes);
 
 module.exports = router;
