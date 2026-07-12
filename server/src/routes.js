@@ -7,6 +7,8 @@ const vehicleRoutes = require('./modules/vehicles/vehicle.routes');
 const driverRoutes = require('./modules/drivers/driver.routes');
 const tripRoutes = require('./modules/trips/trips.routes');
 const maintenanceRoutes = require('./modules/maintenance/maintenance.routes');
+const fuelRoutes = require('./modules/fuel/fuel.routes');
+const expenseRoutes = require('./modules/expenses/expense.routes');
 
 const router = express.Router();
 
@@ -18,6 +20,8 @@ router.use('/vehicles', vehicleRoutes);
 router.use('/drivers', driverRoutes);
 router.use('/trips', tripRoutes);
 router.use('/maintenance', maintenanceRoutes);
-// ... fuel, expenses, reports
+router.use('/fuel', fuelRoutes);
+router.use('/expenses', expenseRoutes);
+// ... reports
 
 module.exports = router;
