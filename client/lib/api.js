@@ -69,3 +69,32 @@ export function getDrivers(searchParams) {
 export function getDriver(id) {
   return apiGet(`/drivers/${id}`);
 }
+
+// Trips
+export async function getTrips(status) {
+  const query = status && status !== "all" ? `?status=${status}` : "";
+  try {
+    const res = await fetch(`${API_BASE}/trips${query}`, {
+      headers: { cookie: await cookieHeader() },
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.data || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getTripOptions() {
+  try {
+    const res = await fetch(`${API_BASE}/trips/options`, {
+      headers: { cookie: await cookieHeader() },
+      cache: "no-store",
+    });
+    if (!res.ok) return { vehicles: [], drivers: [] };
+    return res.json();
+  } catch {
+    return { vehicles: [], drivers: [] };
+  }
+}
