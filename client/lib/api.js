@@ -98,3 +98,31 @@ export async function getTripOptions() {
     return { vehicles: [], drivers: [] };
   }
 }
+
+// Maintenance
+export async function getMaintenance() {
+  try {
+    const res = await fetch(`${API_BASE}/maintenance`, {
+      headers: { cookie: await cookieHeader() },
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.data || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getMaintenanceOptions() {
+  try {
+    const res = await fetch(`${API_BASE}/maintenance/options`, {
+      headers: { cookie: await cookieHeader() },
+      cache: "no-store",
+    });
+    if (!res.ok) return { vehicles: [] };
+    return res.json();
+  } catch {
+    return { vehicles: [] };
+  }
+}
