@@ -1,6 +1,11 @@
 "use client";
 
-import { useState } from "react";
+// Dashboard filter bar. URL-driven (like ListControls): changing a control pushes
+// new searchParams, which re-runs the server component's data fetch — so the KPIs,
+// vehicle-status bars and recent trips all re-scope on the server. Options are the
+// regions / types actually present in the fleet, supplied by the dashboard endpoint.
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { titleize } from "@/lib/format";
 
 function Select({ label, value, onChange, options }) {
   return (
@@ -13,9 +18,10 @@ function Select({ label, value, onChange, options }) {
         onChange={(e) => onChange(e.target.value)}
         className="min-w-[150px] rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 text-sm text-slate-200 focus:border-amber-500/50 focus:outline-none"
       >
+        <option value="">All</option>
         {options.map((o) => (
-          <option key={o} value={o} className="bg-slate-900">
-            {o}
+          <option key={o.value} value={o.value} className="bg-slate-900">
+            {o.label}
           </option>
         ))}
       </select>
@@ -23,32 +29,46 @@ function Select({ label, value, onChange, options }) {
   );
 }
 
-export default function FilterBar() {
-  // Local state for now; will drive server queries once the API is wired.
-  const [type, setType] = useState("All");
-  const [status, setStatus] = useState("All");
-  const [region, setRegion] = useState("All");
+export default function FilterBar({ options = { regions: [], types: [] } }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+
+  function push(next) {
+    const sp = new URLSearchParams(params.toString());
+    for (const [k, v] of Object.entries(next)) {
+      if (!v) sp.delete(k);
+      else sp.set(k, v);
+    }
+    const qs = sp.toString();
+    router.push(qs ? `${pathname}?${qs}` : pathname);
+  }
+
+  const type = params.get("type") || "";
+  const region = params.get("region") || "";
 
   return (
     <div className="flex flex-wrap items-end gap-4">
       <Select
         label="Vehicle Type"
         value={type}
-        onChange={setType}
-        options={["All", "Van", "Truck", "Mini", "Car", "Bus"]}
-      />
-      <Select
-        label="Status"
-        value={status}
-        onChange={setStatus}
-        options={["All", "Available", "On Trip", "In Shop", "Retired"]}
+        onChange={(v) => push({ type: v })}
+        options={options.types.map((t) => ({ value: t, label: titleize(t) }))}
       />
       <Select
         label="Region"
         value={region}
-        onChange={setRegion}
-        options={["All", "North", "South", "East", "West"]}
+        onChange={(v) => push({ region: v })}
+        options={options.regions.map((r) => ({ value: r, label: r }))}
       />
+      {(type || region) && (
+        <button
+          onClick={() => router.push(pathname)}
+          className="rounded-lg px-3 py-2 text-sm text-slate-400 hover:text-slate-200"
+        >
+          Reset
+        </button>
+      )}
     </div>
   );
 }

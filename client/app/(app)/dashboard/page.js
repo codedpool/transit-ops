@@ -9,21 +9,28 @@ import {
   vehicleStatus as fallbackStatus,
 } from "@/lib/placeholderData";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }) {
+  const sp = await searchParams;
   let data;
   let live = true;
   try {
-    data = await getDashboardSummary();
+    data = await getDashboardSummary(sp);
   } catch {
     live = false;
     data = {
       kpis: fallbackKpis,
       recentTrips: fallbackTrips,
       vehicleStatus: fallbackStatus,
+      filterOptions: { regions: [], types: [] },
     };
   }
 
-  const { kpis, recentTrips, vehicleStatus } = data;
+  const {
+    kpis,
+    recentTrips,
+    vehicleStatus,
+    filterOptions = { regions: [], types: [] },
+  } = data;
 
   return (
     <div className="space-y-6">
@@ -41,7 +48,7 @@ export default async function DashboardPage() {
         )}
       </div>
 
-      <FilterBar />
+      <FilterBar options={filterOptions} />
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
         {kpis.map((k) => (

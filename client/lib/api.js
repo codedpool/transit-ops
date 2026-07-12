@@ -25,8 +25,8 @@ export async function getSession() {
   }
 }
 
-export async function getDashboardSummary() {
-  const res = await fetch(`${API_BASE}/dashboard/summary`, {
+export async function getDashboardSummary(searchParams) {
+  const res = await fetch(`${API_BASE}/dashboard/summary${qs(searchParams)}`, {
     headers: { cookie: await cookieHeader() },
     cache: "no-store",
   });

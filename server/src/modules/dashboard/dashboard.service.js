@@ -1,4 +1,6 @@
 // Dashboard aggregates computed live from the DB (grouped counts, no per-row loops).
+// Optional region / vehicle-type filters scope every metric so the overview can be
+// narrowed to a slice of the fleet.
 const prisma = require('../../lib/prisma');
 
 const TRIP_LABEL = {
@@ -8,7 +10,49 @@ const TRIP_LABEL = {
   CANCELLED: 'Cancelled',
 };
 
-async function getSummary() {
+// Turn the dashboard controls into a Prisma vehicle filter.
+function vehicleScope(query = {}) {
+  const scope = {};
+  const region = (query.region || '').trim();
+  const type = (query.type || '').trim();
+  if (region) scope.region = { equals: region, mode: 'insensitive' };
+  if (type) scope.type = type;
+  return scope;
+}
+
+// Distinct regions / types actually present, so the UI only offers real options.
+async function getFilterOptions() {
+  const [regions, types] = await Promise.all([
+    prisma.vehicle.findMany({
+      where: { region: { not: null } },
+      distinct: ['region'],
+      select: { region: true },
+      orderBy: { region: 'asc' },
+    }),
+    prisma.vehicle.findMany({
+      distinct: ['type'],
+      select: { type: true },
+      orderBy: { type: 'asc' },
+    }),
+  ]);
+  return {
+    regions: regions.map((r) => r.region).filter(Boolean),
+    types: types.map((t) => t.type),
+  };
+}
+
+async function getSummary(query = {}) {
+  const scope = vehicleScope(query);
+  const hasScope = Object.keys(scope).length > 0;
+  const region = (query.region || '').trim();
+  const type = (query.type || '').trim();
+
+  // A vehicle count for a given status, within the current scope.
+  const vWhere = (status) => ({ ...scope, status });
+  // Trips are scoped by their vehicle; drivers only by region (they have no type).
+  const tripScope = hasScope ? { vehicle: scope } : {};
+  const driverRegion = region ? { region: { equals: region, mode: 'insensitive' } } : {};
+
   const [
     availableVehicles,
     onTripVehicles,
@@ -18,19 +62,22 @@ async function getSummary() {
     pendingTrips,
     driversOnDuty,
     recent,
+    filterOptions,
   ] = await Promise.all([
-    prisma.vehicle.count({ where: { status: 'AVAILABLE' } }),
-    prisma.vehicle.count({ where: { status: 'ON_TRIP' } }),
-    prisma.vehicle.count({ where: { status: 'IN_SHOP' } }),
-    prisma.vehicle.count({ where: { status: 'RETIRED' } }),
-    prisma.trip.count({ where: { status: 'DISPATCHED' } }),
-    prisma.trip.count({ where: { status: 'DRAFT' } }),
-    prisma.driver.count({ where: { status: { in: ['AVAILABLE', 'ON_TRIP'] } } }),
+    prisma.vehicle.count({ where: vWhere('AVAILABLE') }),
+    prisma.vehicle.count({ where: vWhere('ON_TRIP') }),
+    prisma.vehicle.count({ where: vWhere('IN_SHOP') }),
+    prisma.vehicle.count({ where: vWhere('RETIRED') }),
+    prisma.trip.count({ where: { status: 'DISPATCHED', ...tripScope } }),
+    prisma.trip.count({ where: { status: 'DRAFT', ...tripScope } }),
+    prisma.driver.count({ where: { status: { in: ['AVAILABLE', 'ON_TRIP'] }, ...driverRegion } }),
     prisma.trip.findMany({
+      where: tripScope,
       orderBy: { createdAt: 'desc' },
       take: 6,
       include: { vehicle: true, driver: true },
     }),
+    getFilterOptions(),
   ]);
 
   const activeVehicles = availableVehicles + onTripVehicles + inShopVehicles; // non-retired
@@ -67,7 +114,7 @@ async function getSummary() {
     { label: 'Retired', value: retiredVehicles, color: 'rose' },
   ];
 
-  return { kpis, recentTrips, vehicleStatus };
+  return { kpis, recentTrips, vehicleStatus, filterOptions, filters: { region, type } };
 }
 
 module.exports = { getSummary };

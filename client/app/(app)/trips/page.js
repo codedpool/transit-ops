@@ -2,15 +2,18 @@ import { getSession, getTrips, getTripOptions } from "@/lib/api";
 import TripLifecycle from "@/components/trips/TripLifecycle";
 import CreateTripForm from "@/components/trips/CreateTripForm";
 import TripBoard from "@/components/trips/TripBoard";
+import TripsFilter from "@/components/trips/TripsFilter";
 
-export default async function TripsPage() {
+export default async function TripsPage({ searchParams }) {
+  const sp = await searchParams;
+  const status = sp?.status;
   const session = await getSession();
   const canManage =
     Array.isArray(session?.permissions?.trips) &&
     session.permissions.trips.includes("create");
 
   const [trips, options] = await Promise.all([
-    getTrips(),
+    getTrips(status),
     canManage ? getTripOptions() : Promise.resolve({ vehicles: [], drivers: [] }),
   ]);
 
@@ -38,9 +41,12 @@ export default async function TripsPage() {
             canManage ? "lg:col-span-2" : "lg:col-span-3"
           }`}
         >
-          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-            Live Board
-          </h2>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              Live Board
+            </h2>
+            <TripsFilter />
+          </div>
           <TripBoard trips={trips} canManage={canManage} />
         </section>
       </div>
