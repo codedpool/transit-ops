@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { API_BASE } from "@/lib/config";
 
@@ -39,38 +40,66 @@ export default function LoginPage() {
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-      {/* Brand panel */}
-      <div className="hidden flex-col justify-between border-r border-slate-800 bg-slate-950/60 p-12 lg:flex">
-        <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500 text-lg font-bold text-slate-950">
-            T
-          </span>
-          <div>
-            <h1 className="text-xl font-semibold text-slate-100">TransitOps</h1>
-            <p className="text-sm text-slate-500">
-              Smart Transport Operations Platform
-            </p>
+      {/* Brand panel — fleet photo with a dark scrim so the light text stays legible */}
+      <div className="relative hidden overflow-hidden border-r border-slate-800 lg:block">
+        <Image
+          src="/login.png"
+          alt="TransitOps fleet at a depot"
+          fill
+          priority
+          sizes="(min-width: 1024px) 50vw, 0px"
+          className="object-cover object-center"
+        />
+        {/* Scrim: darker at top and bottom where the text sits, lighter through the middle */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/50 to-slate-950/85" />
+
+        <div className="relative flex min-h-screen flex-col justify-between p-12 [text-shadow:0_1px_3px_rgb(2_6_23_/_0.6)]">
+          <div className="flex items-center gap-3">
+            <Image
+              src="/logo-mark.png"
+              alt=""
+              width={203}
+              height={203}
+              className="h-11 w-11 drop-shadow-md"
+            />
+            <div>
+              <h1 className="text-xl font-semibold text-white">TransitOps</h1>
+              <p className="text-sm text-white/70">
+                Smart Transport Operations Platform
+              </p>
+            </div>
           </div>
+          <div>
+            <p className="mb-3 text-sm font-medium text-white/80">
+              One login, four roles:
+            </p>
+            <ul className="space-y-2">
+              {ROLES.map((r) => (
+                <li key={r} className="flex items-center gap-2 text-white/90">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                  {r}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <p className="text-xs text-white/60">TransitOps © 2026 · RBAC enabled</p>
         </div>
-        <div>
-          <p className="mb-3 text-sm font-medium text-slate-400">
-            One login, four roles:
-          </p>
-          <ul className="space-y-2">
-            {ROLES.map((r) => (
-              <li key={r} className="flex items-center gap-2 text-slate-300">
-                <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-                {r}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <p className="text-xs text-slate-600">TransitOps © 2026 · RBAC enabled</p>
       </div>
 
       {/* Form panel */}
       <div className="flex items-center justify-center p-6">
         <form onSubmit={onSubmit} className="w-full max-w-sm space-y-5">
+          <div className="mx-auto w-fit rounded-2xl bg-white px-6 py-4 shadow-sm ring-1 ring-slate-200/70">
+            <Image
+              src="/logo.png"
+              alt="TransitOps"
+              width={502}
+              height={346}
+              priority
+              className="h-auto w-40"
+            />
+          </div>
+
           <div>
             <h2 className="text-2xl font-semibold text-slate-100">
               Sign in to your account

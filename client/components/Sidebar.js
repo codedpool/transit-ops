@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -13,7 +14,6 @@ const NAV = [
   { label: "Maintenance", href: "/maintenance", modules: ["maintenance"] },
   { label: "Fuel & Expenses", href: "/fuel-expenses", modules: ["fuel", "expenses"] },
   { label: "Analytics", href: "/analytics", modules: ["reports"] },
-  { label: "Settings", href: "/settings", modules: ["users"] },
 ];
 
 function canAccess(item, permissions) {
@@ -28,11 +28,15 @@ export default function Sidebar({ permissions }) {
   const items = NAV.filter((item) => canAccess(item, permissions));
 
   return (
-    <aside className="hidden w-60 shrink-0 flex-col border-r border-slate-800 bg-slate-950/60 md:flex">
+    <aside className="hidden w-60 shrink-0 flex-col border-r border-slate-800 bg-slate-900/60 md:flex">
       <div className="flex h-16 items-center gap-2 border-b border-slate-800 px-5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500 font-bold text-slate-950">
-          T
-        </span>
+        <Image
+          src="/logo-mark.png"
+          alt=""
+          width={203}
+          height={203}
+          className="h-8 w-8"
+        />
         <span className="text-lg font-semibold tracking-tight text-slate-100">
           TransitOps
         </span>
