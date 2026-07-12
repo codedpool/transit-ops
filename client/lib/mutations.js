@@ -1,7 +1,9 @@
 // CLIENT-SIDE write helpers. Used by forms/buttons in Client Components.
 // Sends the auth cookie (credentials: include) plus the double-submit CSRF
-// header the backend requires on state-changing requests.
+// header the backend requires on state-changing requests. Raises a toast on
+// success/failure for every action.
 import { API_BASE } from "@/lib/config";
+import { toast } from "@/components/ToastProvider";
 
 function readCsrfToken() {
   if (typeof document === "undefined") return "";
@@ -12,26 +14,35 @@ function readCsrfToken() {
 // Throws an Error with a `.details` array ([{field,message}]) on validation
 // failure, and `.status` for the HTTP code, so forms can render field errors.
 async function apiWrite(path, method, body) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    method,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      "x-csrf-token": readCsrfToken(),
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "x-csrf-token": readCsrfToken(),
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
 
-  if (res.status === 204) return null;
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const err = new Error(data?.error?.message || `Request failed (${res.status}).`);
-    err.status = res.status;
-    err.details = data?.error?.details || [];
-    err.code = data?.error?.code;
-    throw err;
+    if (res.status === 204) {
+      toast(method === "DELETE" ? "Deleted." : "Saved.");
+      return null;
+    }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err = new Error(data?.error?.message || `Request failed (${res.status}).`);
+      err.status = res.status;
+      err.details = data?.error?.details || [];
+      err.code = data?.error?.code;
+      throw err;
+    }
+    toast(method === "DELETE" ? "Deleted." : "Saved.");
+    return data;
+  } catch (e) {
+    toast(e.message, "error");
+    throw e;
   }
-  return data;
 }
 
 // Vehicles
@@ -51,3 +62,7 @@ export const deleteFuelLog = (id) => apiWrite(`/fuel/${id}`, "DELETE");
 // Expenses
 export const createExpense = (body) => apiWrite("/expenses", "POST", body);
 export const deleteExpense = (id) => apiWrite(`/expenses/${id}`, "DELETE");
+
+// Vehicle documents
+export const createDocument = (body) => apiWrite("/documents", "POST", body);
+export const deleteDocument = (id) => apiWrite(`/documents/${id}`, "DELETE");
