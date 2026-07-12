@@ -1,4 +1,5 @@
 import LogoutButton from "@/components/LogoutButton";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const ROLE_LABELS = {
   FLEET_MANAGER: "Fleet Manager",
@@ -31,6 +32,7 @@ export default function Topbar({ user }) {
       </div>
 
       <div className="ml-auto flex items-center gap-3">
+        <ThemeToggle />
         <span className="text-sm text-slate-300">{user?.name}</span>
         <span className="rounded-full border border-sky-500/30 bg-sky-500/10 px-2.5 py-1 text-xs text-sky-400">
           {roleLabel}

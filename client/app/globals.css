@@ -5,14 +5,87 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/*
+  Theming strategy — one palette, two themes.
+  The whole UI is built on Tailwind's `slate` scale. Rather than annotate every
+  component with `dark:` variants, we redefine the `--color-slate-*` tokens that
+  those utilities resolve through. Light mode (the default) INVERTS the ramp so
+  high numbers become light surfaces and low numbers become dark ink; `.dark`
+  restores the normal ramp. slate-950 stays dark in both — it is only ever used
+  as ink on a bright accent. Accent text levels (amber/emerald/sky/rose 300-400)
+  are darkened in light mode so colored text stays legible on light surfaces.
+*/
 :root {
+  color-scheme: light;
+
+  --color-slate-50: #020617;
+  --color-slate-100: #0f172a;
+  --color-slate-200: #1e293b;
+  --color-slate-300: #334155;
+  --color-slate-400: #475569;
+  --color-slate-500: #64748b;
+  --color-slate-600: #94a3b8;
+  --color-slate-700: #cbd5e1;
+  --color-slate-800: #e2e8f0;
+  --color-slate-900: #f1f5f9;
+  --color-slate-950: #020617;
+
+  --color-amber-300: #b45309;
+  --color-amber-400: #d97706;
+  --color-emerald-300: #047857;
+  --color-emerald-400: #059669;
+  --color-sky-300: #0369a1;
+  --color-sky-400: #0284c7;
+  --color-rose-300: #be123c;
+  --color-rose-400: #e11d48;
+
+  --page-bg: #f6f8fb;
+  --page-fg: #1e293b;
+  --scroll-thumb: #cbd5e1;
+}
+
+:root.dark {
   color-scheme: dark;
+
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+
+  --color-amber-300: #fcd34d;
+  --color-amber-400: #fbbf24;
+  --color-emerald-300: #6ee7b7;
+  --color-emerald-400: #34d399;
+  --color-sky-300: #7dd3fc;
+  --color-sky-400: #38bdf8;
+  --color-rose-300: #fda4af;
+  --color-rose-400: #fb7185;
+
+  --page-bg: #0a0e14;
+  --page-fg: #e2e8f0;
+  --scroll-thumb: #1e293b;
 }
 
 body {
-  background-color: #0a0e14;
-  color: #e2e8f0;
+  background-color: var(--page-bg);
+  color: var(--page-fg);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -20,7 +93,7 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: var(--scroll-thumb);
   border-radius: 6px;
 }
 ::-webkit-scrollbar-track {
