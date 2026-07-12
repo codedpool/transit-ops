@@ -141,3 +141,17 @@ export async function getMaintenanceOptions() {
     return { vehicles: [] };
   }
 }
+
+// Analytics / reports
+export async function getAnalytics() {
+  try {
+    const res = await fetch(`${API_BASE}/reports/overview`, {
+      headers: { cookie: await cookieHeader() },
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
