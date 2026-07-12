@@ -11,6 +11,7 @@
 # Belt-and-suspenders: keep local-only docs out no matter what
 /plan.md
 /*.pdf
+/mockup/
 
 # --- Ignored inside client/ and server/ ---
 # Dependencies
